@@ -3,6 +3,8 @@
 `s01 > s02 > s03 > s04 > s05 > s06 | [ s07 ] s08 > s09 > s10 > s11 > s12`
 
 > *"大きな目標を小タスクに分解し、順序付けし、ディスクに記録する"* -- ファイルベースのタスクグラフ、マルチエージェント協調の基盤。
+>
+> **Harness 層**: 永続タスク -- どの会話よりも長く生きる目標。
 
 ## 問題
 
@@ -12,7 +14,7 @@ s03のTodoManagerはメモリ上のフラットなチェックリストに過ぎ
 
 ## 解決策
 
-フラットなチェックリストをディスクに永続化する**タスクグラフ**に昇格させる。各タスクは1つのJSONファイルで、ステータス・前方依存(`blockedBy`)・後方依存(`blocks`)を持つ。タスクグラフは常に3つの問いに答える:
+フラットなチェックリストをディスクに永続化する**タスクグラフ**に昇格させる。各タスクは1つのJSONファイルで、ステータス・前方依存(`blockedBy`)を持つ。タスクグラフは常に3つの問いに答える:
 
 - **何が実行可能か?** -- `pending`ステータスで`blockedBy`が空のタスク。
 - **何がブロックされているか?** -- 未完了の依存を待つタスク。
@@ -58,7 +60,7 @@ class TaskManager:
     def create(self, subject, description=""):
         task = {"id": self._next_id, "subject": subject,
                 "status": "pending", "blockedBy": [],
-                "blocks": [], "owner": ""}
+                "owner": ""}
         self._save(task)
         self._next_id += 1
         return json.dumps(task, indent=2)
@@ -79,12 +81,16 @@ def _clear_dependency(self, completed_id):
 
 ```python
 def update(self, task_id, status=None,
-           add_blocked_by=None, add_blocks=None):
+           add_blocked_by=None, remove_blocked_by=None):
     task = self._load(task_id)
     if status:
         task["status"] = status
         if status == "completed":
             self._clear_dependency(task_id)
+    if add_blocked_by:
+        task["blockedBy"] = list(set(task["blockedBy"] + add_blocked_by))
+    if remove_blocked_by:
+        task["blockedBy"] = [x for x in task["blockedBy"] if x not in remove_blocked_by]
     self._save(task)
 ```
 
@@ -108,7 +114,7 @@ s07以降、タスクグラフがマルチステップ作業のデフォルト�
 |---|---|---|
 | Tools | 5 | 8 (`task_create/update/list/get`) |
 | 計画モデル | フラットチェックリスト (メモリ) | 依存関係付きタスクグラフ (ディスク) |
-| 関係 | なし | `blockedBy` + `blocks` エッジ |
+| 関係 | なし | `blockedBy` エッジ |
 | ステータス追跡 | 完了か未完了 | `pending` -> `in_progress` -> `completed` |
 | 永続性 | 圧縮で消失 | 圧縮・再起動後も存続 |
 

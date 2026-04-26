@@ -3,10 +3,12 @@
 `s01 > s02 > s03 > s04 > s05 > s06 | s07 > [ s08 ] s09 > s10 > s11 > s12`
 
 > *"慢操作丢后台, agent 继续想下一步"* -- 后台线程跑命令, 完成后注入通知。
+>
+> **Harness 层**: 后台执行 -- 模型继续思考, harness 负责等待。
 
 ## 问题
 
-有些命令要跑好几分钟: `npm install`、`pytest`、`docker build`。阻塞式循环下模型只能干等。用户说 "装依赖, 顺便建个配置文件", 智能体却只能一个一个来。
+有些命令要跑好几分钟: `npm install`、`pytest`、`docker build`。阻塞式循环下模型只能干等。用户说 "装依赖, 顺便建个配置文件", Agent 却只能一个一个来。
 
 ## 解决方案
 
@@ -79,8 +81,6 @@ def agent_loop(messages: list):
             messages.append({"role": "user",
                 "content": f"<background-results>\n{notif_text}\n"
                            f"</background-results>"})
-            messages.append({"role": "assistant",
-                "content": "Noted background results."})
         response = client.messages.create(...)
 ```
 

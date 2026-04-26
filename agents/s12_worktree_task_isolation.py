@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Harness: directory isolation -- parallel execution lanes that never collide.
 """
 s12_worktree_task_isolation.py - Worktree + Task Isolation
 
@@ -746,7 +747,8 @@ def agent_loop(messages: list):
                     output = handler(**block.input) if handler else f"Unknown tool: {block.name}"
                 except Exception as e:
                     output = f"Error: {e}"
-                print(f"> {block.name}: {str(output)[:200]}")
+                print(f"> {block.name}:")
+                print(str(output)[:200])
                 results.append(
                     {
                         "type": "tool_result",

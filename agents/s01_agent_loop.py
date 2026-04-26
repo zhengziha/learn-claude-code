@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Harness: the loop -- the model's first connection to the real world.
 """
 s01_agent_loop.py - The Agent Loop
 
@@ -25,6 +26,17 @@ policy, hooks, and lifecycle controls on top.
 
 import os
 import subprocess
+
+try:
+    import readline
+    # #143 UTF-8 backspace fix for macOS libedit
+    readline.parse_and_bind('set bind-tty-special-chars off')
+    readline.parse_and_bind('set input-meta on')
+    readline.parse_and_bind('set output-meta on')
+    readline.parse_and_bind('set convert-meta off')
+    readline.parse_and_bind('set enable-meta-keybindings on')
+except ImportError:
+    pass
 
 from anthropic import Anthropic
 from dotenv import load_dotenv
@@ -61,6 +73,8 @@ def run_bash(command: str) -> str:
         return out[:50000] if out else "(no output)"
     except subprocess.TimeoutExpired:
         return "Error: Timeout (120s)"
+    except (FileNotFoundError, OSError) as e:
+        return f"Error: {e}"
 
 
 # -- The core pattern: a while loop that calls tools until the model stops --

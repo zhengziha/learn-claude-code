@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Harness: tool dispatch -- expanding what the model can reach.
 """
 s02_tool_use.py - Tools
 
@@ -124,7 +125,8 @@ def agent_loop(messages: list):
             if block.type == "tool_use":
                 handler = TOOL_HANDLERS.get(block.name)
                 output = handler(**block.input) if handler else f"Unknown tool: {block.name}"
-                print(f"> {block.name}: {output[:200]}")
+                print(f"> {block.name}:")
+                print(output[:200])
                 results.append({"type": "tool_result", "tool_use_id": block.id, "content": output})
         messages.append({"role": "user", "content": results})
 

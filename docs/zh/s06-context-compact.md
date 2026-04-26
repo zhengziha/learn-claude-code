@@ -3,10 +3,12 @@
 `s01 > s02 > s03 > s04 > s05 > [ s06 ] | s07 > s08 > s09 > s10 > s11 > s12`
 
 > *"上下文总会满, 要有办法腾地方"* -- 三层压缩策略, 换来无限会话。
+>
+> **Harness 层**: 压缩 -- 干净的记忆, 无限的会话。
 
 ## 问题
 
-上下文窗口是有限的。读一个 1000 行的文件就吃掉 ~4000 token; 读 30 个文件、跑 20 条命令, 轻松突破 100k token。不压缩, 智能体根本没法在大项目里干活。
+上下文窗口是有限的。读一个 1000 行的文件就吃掉 ~4000 token; 读 30 个文件、跑 20 条命令, 轻松突破 100k token。不压缩, Agent 根本没法在大项目里干活。
 
 ## 解决方案
 
@@ -79,7 +81,6 @@ def auto_compact(messages: list) -> list:
     )
     return [
         {"role": "user", "content": f"[Compressed]\n\n{response.content[0].text}"},
-        {"role": "assistant", "content": "Understood. Continuing."},
     ]
 ```
 

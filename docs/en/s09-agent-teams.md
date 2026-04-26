@@ -3,6 +3,8 @@
 `s01 > s02 > s03 > s04 > s05 > s06 | s07 > s08 > [ s09 ] s10 > s11 > s12`
 
 > *"When the task is too big for one, delegate to teammates"* -- persistent teammates + async mailboxes.
+>
+> **Harness layer**: Team mailboxes -- multiple models, coordinated through files.
 
 ## Problem
 
@@ -91,8 +93,6 @@ def _teammate_loop(self, name, role, prompt):
         if inbox != "[]":
             messages.append({"role": "user",
                 "content": f"<inbox>{inbox}</inbox>"})
-            messages.append({"role": "assistant",
-                "content": "Noted inbox messages."})
         response = client.messages.create(...)
         if response.stop_reason != "tool_use":
             break

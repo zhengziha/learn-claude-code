@@ -3,6 +3,8 @@
 `s01 > s02 > s03 > s04 > s05 > [ s06 ] | s07 > s08 > s09 > s10 > s11 > s12`
 
 > *"Context will fill up; you need a way to make room"* -- three-layer compression strategy for infinite sessions.
+>
+> **Harness layer**: Compression -- clean memory for infinite sessions.
 
 ## Problem
 
@@ -79,7 +81,6 @@ def auto_compact(messages: list) -> list:
     )
     return [
         {"role": "user", "content": f"[Compressed]\n\n{response.content[0].text}"},
-        {"role": "assistant", "content": "Understood. Continuing."},
     ]
 ```
 

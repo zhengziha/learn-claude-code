@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Harness: team mailboxes -- multiple models, coordinated through files.
 """
 s09_agent_teams.py - Agent Teams
 
@@ -349,10 +350,6 @@ def agent_loop(messages: list):
                 "role": "user",
                 "content": f"<inbox>{json.dumps(inbox, indent=2)}</inbox>",
             })
-            messages.append({
-                "role": "assistant",
-                "content": "Noted inbox messages.",
-            })
         response = client.messages.create(
             model=MODEL,
             system=SYSTEM,
@@ -371,7 +368,8 @@ def agent_loop(messages: list):
                     output = handler(**block.input) if handler else f"Unknown tool: {block.name}"
                 except Exception as e:
                     output = f"Error: {e}"
-                print(f"> {block.name}: {str(output)[:200]}")
+                print(f"> {block.name}:")
+                print(str(output)[:200])
                 results.append({
                     "type": "tool_result",
                     "tool_use_id": block.id,
